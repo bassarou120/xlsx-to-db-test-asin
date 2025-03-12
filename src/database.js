@@ -8,7 +8,7 @@ async function initDB() {
     await client.query(`
         CREATE TABLE IF NOT EXISTS personnes (
             id SERIAL PRIMARY KEY,
-            matricule VARCHAR(100),
+            matricule VARCHAR(100) UNIQUE,
             nom VARCHAR(100),
             prenom VARCHAR(100),
             datedenaissance DATE,
