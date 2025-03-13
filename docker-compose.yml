@@ -1,0 +1,32 @@
+#version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    container_name: db-container
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+
+  app:
+    build: .
+    container_name: xlsx-to-db-test-asin
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    volumes:
+      - /:/host_root:ro
+    working_dir: /host_root
+    entrypoint: ["node", "/app/src/index.js"]
+    command: ["/data/people.xlsx"]
+
+
+volumes:
+  db_data:
