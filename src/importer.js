@@ -5,7 +5,7 @@ const ora = require("ora").default;
 
 
 async function importerFichier(fichier) {
-    const debut = Date.now();
+ //   const debut = Date.now();
 
     console.log(`Heure du debut de l'importation : ${ moment(debut).format(' h:mm:ss a')} `);
 
