@@ -19,7 +19,7 @@ async function importerFichier(fichier) {
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const donnees = xlsx.utils.sheet_to_json(sheet);
 
-    // console.log(donnees);
+   console.log(donnees);
 /*
     for (const row of donnees) {
 
