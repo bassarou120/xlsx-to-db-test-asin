@@ -1,7 +1,9 @@
 const { initDB } = require('./database');
 const { importerFichier } = require('./importer');
+const moment = require("moment");
 
 (async () => {
+
     await initDB();
     const fichier = process.argv[2];
 
@@ -11,5 +13,8 @@ const { importerFichier } = require('./importer');
     }
 
     await importerFichier(fichier);
+
     process.exit();
 })();
+
+
