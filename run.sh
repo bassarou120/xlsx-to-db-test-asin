@@ -21,18 +21,7 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-#FICHIER_XLSX=$1
-
-FICHIER_XLSX=$(realpath "$1")  # Obtenir le chemin absolu
-FICHIER_RELATIF=$(basename "$FICHIER_XLSX") # Récupérer juste le nom du fichier
-
-# Obtenir le chemin absolu compatible Linux/macOS
-if command -v realpath &> /dev/null; then
-    FICHIER_XLSX=$(realpath "$1")
-else
-    # Alternative pour macOS si realpath n'est pas dispo
-    FICHIER_XLSX="$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
-fi
+FICHIER_XLSX=$1
 
 
 
@@ -58,26 +47,26 @@ if [ "$USE_CONTAINER_DB" = "true" ]; then
         docker-compose up -d --build
         sleep 5  # Attente pour PostgreSQL
     fi
+#    sleep 20  # Attendre 10 secondes avant d'exécuter la commande
+
+    # Copier le fichier XLSX dans le conteneur
+#    docker cp "$FICHIER_XLSX" xlsx-to-db-test-asin-app:/app/$(basename "$FICHIER_XLSX")
 
 
-    # Copier le fichier dans le conteneur Docker
-    echo "📂 Copie du fichier dans le conteneur..."
-    docker cp "$FICHIER_XLSX" xlsx-to-db-test-asin-app:/app/people-sample.xlsx
 
-    # Lancer l'importation dans le conteneur
-    echo "🚀 Exécution de l'importation..."
-    docker exec -i xlsx-to-db-test-asin-app node src/index.js "/app/people-sample.xlsx"
+#    docker exec -it xlsx-to-db-test-asin-app bash
+
+    # Exécuter le script à l'intérieur du conteneur
+#    docker exec -i xlsx-to-db-test-asin-app node src/index.js "src/people-sample.xlsx"
 
 
-    # Exécuter l'application avec le fichier fourni
-#    echo "Exécution de l'application avec le fichier : $FICHIER_XLSX"
-#    docker cp "$FICHIER_XLSX" xlsx-to-db-app:/app/
-#     docker cp "$FICHIER_XLSX" xlsx-to-db-test-asin-app:/app/src/sample.xlsx
-#docker exec -i xlsx-to-db-test-asin-app node src/index.js "/app/$FICHIER_RELATIF"
+#   docker exec -i xlsx-to-db-test-asin-app node "/app/$(basename "$FICHIER_XLSX")"
 
-#  docker exec -i xlsx-to-db-test-asin-app node src/index.js src/sample.xlsx
-#  docker exec -i xlsx-to-db-test-asin-app node src/index.js "/app/people-sample.xlsx"
-#    docker exec -i xlsx-to-db-test-asin-app node src/index.js "$FICHIER_XLSX"
+  # Copier le fichier XLSX dans le conteneur
+    docker cp "$FICHIER_XLSX" xlsx-to-db-test-asin-app:/app/data/$(basename "$FICHIER_XLSX")
+
+    # Exécuter le script à l'intérieur du conteneur
+    docker exec -i xlsx-to-db-test-asin-app node /app/$(basename "$FICHIER_XLSX")
 else
     echo "Utilisation d'une base de données externe : $DB_HOST"
 
