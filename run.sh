@@ -46,10 +46,10 @@ if [ "$USE_CONTAINER_DB" = "true" ]; then
 
     # Exécuter l'application avec le fichier fourni
     echo "Exécution de l'application avec le fichier : $FICHIER_XLSX"
-    docker exec -i xlsx-to-db-test-asin-app node index.js "$FICHIER_XLSX"
+    docker exec -i xlsx-to-db-test-asin-app node src/index.js "$FICHIER_XLSX"
 else
     echo "Utilisation d'une base de données externe : $DB_HOST"
 
     # Exécuter l'application directement sans Docker
-    node index.js "$FICHIER_XLSX"
+    node src/index.js "$FICHIER_XLSX"
 fi

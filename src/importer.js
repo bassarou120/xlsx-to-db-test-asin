@@ -1,11 +1,21 @@
 const xlsx = require('xlsx');
 const { client } = require('./database');
 const moment = require("moment");
-const ora = require("ora").default;
+
+// (async () => {
+//     const ora = (await import("ora")).default;
+//     const spinner = ora("Processing...").start();
+//     // setTimeout(() => {
+//     //     spinner.succeed("Done!");
+//     // }, 2000);
+// })();
+// const ora = require("ora").default;
 
 
 async function importerFichier(fichier) {
- //   const debut = Date.now();
+
+    const ora = (await import("ora")).default;
+     const debut = Date.now();
 
     console.log(`Heure du debut de l'importation : ${ moment(debut).format(' h:mm:ss a')} `);
 
