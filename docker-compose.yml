@@ -1,32 +1,34 @@
-#version: '3.8'
+version: "3.8"
 
 services:
   db:
     image: postgres:16
-    container_name: db-container
+    container_name: postgres_db
     restart: always
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    volumes:
-      - db_data:/var/lib/postgresql/data
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     ports:
-      - "5434:5432"
+      - "${DB_PORT}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
 
   app:
     build: .
-    container_name: xlsx-to-db-test-asin
+    container_name: xlsx-to-db-test-asin-app
     depends_on:
       - db
     environment:
-      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      DB_HOST: ${DB_HOST}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_PORT: ${DB_PORT}
     volumes:
-      - /:/host_root:ro
-    working_dir: /host_root
-    entrypoint: ["node", "/app/src/index.js"]
-    command: ["/data/people.xlsx"]
-
+      - .:/app
+    stdin_open: true
+    tty: true
 
 volumes:
-  db_data:
+  pgdata:
