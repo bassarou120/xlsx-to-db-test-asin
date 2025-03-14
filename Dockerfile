@@ -1,8 +1,9 @@
 
-FROM node:18
+FROM node:22
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm install
-COPY . .
 
-CMD ["node", "src/index.js", "/app/people-sample.xlsx"]
+COPY . .
+RUN npm install
+
+CMD ["node", "src/index.js", "people-sample.xlsx"]

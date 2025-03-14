@@ -1,6 +1,5 @@
 const { initDB } = require('./database');
-const { importerFichier } = require('./importer');
-const readline = require('readline');
+
 
 
 (async () => {
