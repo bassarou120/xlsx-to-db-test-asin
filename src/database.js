@@ -5,6 +5,7 @@ const client = new Client({ connectionString: databaseUrl });
 
 async function initDB() {
     await client.connect();
+    console.log("✅ Connexion à la base de données réussie !");
     await client.query(`
         CREATE TABLE IF NOT EXISTS personnes (
             id SERIAL PRIMARY KEY,
