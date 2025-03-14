@@ -23,3 +23,9 @@ docker-compose run --rm -v /chemin/vers/votre-fichier.xlsx:/data/people.xlsx app
 Explication :
 ✅ -v /chemin/vers/votre-fichier.xlsx:/data/people.xlsx → Monte votre fichier local dans le conteneur
 ✅ app /data/people.xlsx → Fournit le chemin du fichier en argument à l'application
+
+
+
+
+Rends le script exécutable :
+chmod +x wait-for-db.sh
