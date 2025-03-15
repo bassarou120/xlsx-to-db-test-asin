@@ -39,10 +39,14 @@ if [ "$USE_CONTAINER_DB" = "true" ]; then
         mkdir -p "./data"
     fi
 
+    chmod -R 777 ./data
+
+
     # Copier le fichier dans `./data/` si nécessaire
     if [[ "$FICHIER_XLSX" != ./data/* ]]; then
         echo "📂 Copie du fichier dans le dossier ./data/"
         cp "$FICHIER_XLSX" ./data/
+            sleep 5
     fi
 
     # Vérifier si les conteneurs existent déjà
@@ -63,8 +67,16 @@ if [ "$USE_CONTAINER_DB" = "true" ]; then
         sleep 5
     fi
 
+   sleep 10
+
+   touch ./data/test-file.txt
+docker exec xlsx-to-db-test-asin-app ls -l /app/data
+
     # Vérifier si le fichier est bien accessible dans le conteneur
     docker exec xlsx-to-db-test-asin-app ls "/app/data/$(basename "$FICHIER_XLSX")" &>/dev/null
+
+#    ls -l ./data
+
     if [ $? -ne 0 ]; then
         echo "❌ Le fichier n'est pas visible dans le conteneur !"
         exit 1

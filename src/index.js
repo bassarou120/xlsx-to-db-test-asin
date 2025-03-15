@@ -1,25 +1,23 @@
+const {importerFichier} = require("./importer");
 const { initDB } = require('./database');
 
 
 
 (async () => {
 
-  //  await initDB();
-  //  const fichier = process.argv[2];
+   await initDB();
+   const fichier = process.argv[2];
 
-    console.error("Veuillez fournir un fichier XLSX en argument.");
-    // if (!fichier) {
-    //     console.error("Veuillez fournir un fichier XLSX en argument.");
-    //     // process.exit(1);
-    // }
 
-  //  await importerFichier(fichier);
-
-    while (true){
+    if (!fichier) {
         console.error("Veuillez fournir un fichier XLSX en argument.");
+        process.exit(1);
     }
 
-    // process.exit();
+   await importerFichier(fichier);
+
+
+    process.exit();
 })();
 
 

@@ -13,13 +13,10 @@ RUN npm install
 # Copier tout le projet dans le conteneur
 COPY . .
 
-RUN mkdir /app/data/
-
-RUN chmod 777 /app/data/
 
 
 # Commande de démarrage
-CMD ["node", "src/index.js"]
+#CMD ["node", "src/index.js"]
 
 
 
