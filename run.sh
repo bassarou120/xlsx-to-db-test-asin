@@ -69,13 +69,6 @@ if [ "$USE_CONTAINER_DB" = "true" ]; then
 
    sleep 10
 
-   touch ./data/test-file.txt
-docker exec xlsx-to-db-test-asin-app ls -l /app/data
-
-    # Vérifier si le fichier est bien accessible dans le conteneur
-    docker exec xlsx-to-db-test-asin-app ls "/app/data/$(basename "$FICHIER_XLSX")" &>/dev/null
-
-#    ls -l ./data
 
     if [ $? -ne 0 ]; then
         echo "❌ Le fichier n'est pas visible dans le conteneur !"

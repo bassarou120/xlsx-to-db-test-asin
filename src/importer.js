@@ -1,81 +1,72 @@
 const xlsx = require('xlsx');
+
+const moment = require('moment');
+const fs = require('fs');
+const { pipeline } = require('stream');
+const { promisify } = require('util');
 const { client } = require('./database');
-const moment = require("moment");
+
+const pipelineAsync = promisify(pipeline);
 
 
 async function importerFichier(fichier) {
-
     const ora = (await import("ora")).default
-     const debut = Date.now();
 
-    console.log(`Heure du debut de l'importation : ${ moment(debut).format(' h:mm:ss a')} `);
+
+    const debut = Date.now();
+    console.log(`📂 Début de l'importation : ${moment(debut).format('h:mm:ss')}`);
 
     const spinner = ora({
         text: "Importation en cours...",
-        spinner: "dots", // Type de spinner (options : "dots", "line", "star", etc.)
+        spinner: "dots",
     }).start();
 
-
-    const workbook = xlsx.readFile(fichier);
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const donnees = xlsx.utils.sheet_to_json(sheet);
-
-   // console.log(donnees);
-/*
-    for (const row of donnees) {
-
-        await client.query(
-            `INSERT INTO personnes (matricule,nom, prenom,  datedenaissance,status) VALUES ($1, $2, $3, $4, $5)
-                ON CONFLICT (matricule, nom, prenom, datedenaissance) DO NOTHING 
-            `,
-            [row.matricule, row.nom, row.prenom,   convertDate(row.datedenaissance),row.status]
-        );
-
-
-    }
-
-    */
-
     try {
-        const batchSize = 10000; // Nombre de lignes par lot
-        for (let i = 0; i < donnees.length; i += batchSize) {
-            const batch = donnees.slice(i, i + batchSize);
-            const values = batch.map(row => `('${row.matricule}', '${row.nom}', '${row.prenom}', '${convertDate(row.datedenaissance)}', '${row.status}')`).join(",");
+        //  Lire le fichier XLSX et convertir en JSON
+        const workbook = xlsx.readFile(fichier);
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const donnees = xlsx.utils.sheet_to_json(sheet);
 
-            await client.query(
-                `INSERT INTO personnes (matricule, nom, prenom, datedenaissance, status) 
-             VALUES ${values} 
-             ON CONFLICT (matricule, nom, prenom, datedenaissance) DO NOTHING`
-            );
+        // Créer un fichier temporaire CSV pour COPY
+        const tempFile = `./temp_import.csv`;
+        const stream = fs.createWriteStream(tempFile);
+        for (const row of donnees) {
+            stream.write(`${row.matricule},${row.nom},${row.prenom},${convertDate(row.datedenaissance)},${row.status}\n`);
         }
+        stream.end();
+        await pipelineAsync(fs.createReadStream(tempFile), fs.createWriteStream(tempFile));
 
-        spinner.succeed("Importation terminée avec succès !");
-    }catch (error)
-    {
-        spinner.fail("Erreur lors de l'importation !");
+        //  Désactiver les contraintes et index (optionnel, si gros volume)
+        await client.query("ALTER TABLE personnes DISABLE TRIGGER ALL;");
+
+        // Importation rapide avec COPY
+        const query = `
+    \\COPY personnes (matricule, nom, prenom, datedenaissance, status)
+    FROM '${tempFile}' DELIMITER ',' CSV;
+`;
+        await client.query(query);
+
+        // Réactiver les contraintes et index
+        await client.query("ALTER TABLE personnes ENABLE TRIGGER ALL;");
+
+        spinner.succeed("✅ Importation terminée avec succès !");
+    } catch (error) {
+        spinner.fail("❌ Erreur lors de l'importation !");
         console.error(error);
+    } finally {
+        await client.end();
+        const fin = Date.now();
+        console.log(`⏳ Fin de l'importation : ${moment(fin).format('h:mm:ss')}`);
+        console.log(`⏱️ Durée : ${(fin - debut) / 1000} secondes.`);
     }
-
-
-    const fin =Date.now()
-    console.log(`Heure de fin de l'importation : ${ moment(fin).format(' h:mm:ss a')} `);
-    const duree = (fin - debut) / 1000;
-    console.log(`Importation terminée en ${duree} secondes.`);
-    console.log(`c'est à dire  Importation terminée en ${duree/60} minute.`);
-
-
 }
 
-
-// Fonction pour convertir les dates (Excel et formats divers)
-
+// Fonction pour convertir les dates
 function convertDate(value) {
     if (typeof value === "number") {
-        // Si la date est un nombre (format Excel)
         return moment("1899-12-30").add(value, "days").format("YYYY-MM-DD");
     } else if (typeof value === "string") {
-        // Si c'est une chaîne de caractères (formats courants)
-        const date = moment(value, ["DD/MM/YYYY", "DD-MM-YYYY", "YYYY-MM-DD","YYYY/MM/DD", "MM-DD-YYYY","MM/DD/YYYY"], true);
+        const date = moment(value, ["DD/MM/YYYY", "DD-MM-YYYY", "YYYY-MM-DD", "YYYY/MM/DD", "MM-DD-YYYY", "MM/DD/YYYY"], true);
         return date.isValid() ? date.format("YYYY-MM-DD") : null;
     }
     return null;

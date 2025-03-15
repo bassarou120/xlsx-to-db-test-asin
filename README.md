@@ -1,31 +1,74 @@
 
-**a) Présentation du projet**
-Une application CLI pour importer un fichier XLSX dans une base de données en moins de 20 minutes.
+# README.md - Importation de fichiers XLSX vers PostgreSQL
 
-b) Technologies utilisées
-Node.js avec xlsx, pg, dotenv, commander
-PostgreSQL pour la base de données
-Jest pour les tests
-Docker pour exécuter facilement
+## 📌 Description
+Cette application permet d'importer un fichier `.xlsx` contenant des informations sur des personnes dans une base de données PostgreSQL. L'importation est optimisée pour être réalisée en moins de 20 minutes, même pour des fichiers volumineux.
 
-c) Instructions d’installation
+## 🚀 Installation et Configuration
 
-git clone https://github.com/ton-repo/xlsx-to-db.git
-cd xlsx-to-db
+### 1. Prérequis
+- **Node.js** (version 18 ou supérieure)
+- **Docker & Docker Compose**
+- **PostgreSQL** (si utilisé en dehors du conteneur)
+
+### 2. Installation
+
+Clonez le dépôt et installez les dépendances :
+
+```bash
+git clone https://github.com/votre-repo/xlsx-to-db-test-asin.git
+cd xlsx-to-db-test-asin
 npm install
-cp .env.example .env  # Modifier les paramètres de la DB
+```
 
-🚀 Pour lancer le projet :
-docker-compose --env-file .env up --build
+Copiez le fichier `.env.example` en `.env` et configurez vos paramètres PostgreSQL :
 
-docker-compose run --rm -v /chemin/vers/votre-fichier.xlsx:/data/people.xlsx app /data/people.xlsx
+```bash
+cp .env.example .env
+nano .env
+```
 
-Explication :
-✅ -v /chemin/vers/votre-fichier.xlsx:/data/people.xlsx → Monte votre fichier local dans le conteneur
-✅ app /data/people.xlsx → Fournit le chemin du fichier en argument à l'application
+## 📂 Utilisation
 
+### 1. Lancer l'application avec Docker
 
+Si vous utilisez PostgreSQL via Docker, exécutez :
 
+```bash
+./run.sh chemin/vers/fichier.xlsx
+```
 
-Rends le script exécutable :
-chmod +x wait-for-db.sh
+L'application démarre la base de données et importe les données du fichier fourni.
+
+### 2. Exécuter sans Docker (Base de données externe)
+
+Assurez-vous que PostgreSQL est en cours d'exécution et exécutez :
+
+```bash
+node src/index.js chemin/vers/fichier.xlsx
+```
+
+## 📊 Performance
+L'application affiche le temps total d'importation à la fin du processus.
+
+## 📌 Fonctionnalités
+✅ Importation rapide en lots (batchs de 10 000 lignes)
+✅ Gestion des doublons (contrainte UNIQUE sur matricule, nom, prénom, date de naissance)
+✅ Prise en charge de plusieurs formats de date
+✅ Exécution avec ou sans Docker
+✅ Fichiers volumineux pris en charge
+
+## 🛠️ Tests
+
+Exécutez les tests unitaires avec :
+
+```bash
+npm test
+```
+
+## 📷 Capture d'écran
+Ajoutez ici une capture d'écran des performances d'importation.
+
+---
+
+🚀 **Développé avec Node.js, PostgreSQL et Docker**.

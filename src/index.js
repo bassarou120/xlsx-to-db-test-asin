@@ -1,4 +1,4 @@
-const {importerFichier} = require("./importer");
+const {importerFichier} = require("./importer_par_lot");
 const { initDB } = require('./database');
 
 
