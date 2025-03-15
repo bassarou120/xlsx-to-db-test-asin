@@ -17,21 +17,22 @@ fi
 # Vérifier si un fichier XLSX est fourni en argument
 if [ -z "$1" ]; then
     echo "❌ Aucun fichier XLSX fourni."
-  echo "Usage: $0 fichier.xlsx"
-  exit 1
+    echo "Usage: $0 fichier.xlsx"
+    exit 1
 fi
 
-#FICHIER_XLSX=$1
-
 # Récupérer le chemin absolu du fichier fourni
-FICHIER_XLSX="$(realpath "$1")"
+#FICHIER_XLSX="$(realpath "$1")"
+
+FICHIER_XLSX="$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
+
 
 
 # Vérifier si on utilise la base de données du conteneur
 if [ "$USE_CONTAINER_DB" = "true" ]; then
     echo "Utilisation de la base de données du conteneur."
 
-    # Vérifier si les conteneurs existent déjà
+       # Vérifier si les conteneurs existent déjà
     if docker ps -a --format '{{.Names}}' | grep -q '^xlsx-to-db-test-asin-app$' && docker ps -a --format '{{.Names}}' | grep -q '^postgres_db$'; then
         echo "Les services existent déjà."
 
@@ -45,38 +46,54 @@ if [ "$USE_CONTAINER_DB" = "true" ]; then
         fi
     else
         echo "Les services n'existent pas encore. Construction et démarrage..."
-        docker-compose up -d --build
+        docker-compose up --build
         sleep 5  # Attente pour PostgreSQL
     fi
-#    sleep 20  # Attendre 10 secondes avant d'exécuter la commande
 
-    # Copier le fichier XLSX dans le conteneur
-#    docker cp "$FICHIER_XLSX" xlsx-to-db-test-asin-app:/app/$(basename "$FICHIER_XLSX")
+#    # Vérifier si le conteneur existe et est actif
+#    if ! docker inspect xlsx-to-db-test-asin-app &> /dev/null; then
+#        echo "Le conteneur n'existe pas. Lancement..."
+#        docker-compose up -d --build
+#        sleep 5
+#    elif ! docker ps --format '{{.Names}}' | grep -q '^xlsx-to-db-test-asin-app$'; then
+#        echo "Le conteneur est arrêté. Redémarrage..."
+#        docker-compose start
+#        sleep 5
+#    else
+#        echo "Le conteneur est déjà en cours d'exécution."
+#    fi
 
-
-
-#    docker exec -it xlsx-to-db-test-asin-app bash
-
-    # Exécuter le script à l'intérieur du conteneur
-#    docker exec -i xlsx-to-db-test-asin-app node src/index.js "src/people-sample.xlsx"
-
-
-#   docker exec -i xlsx-to-db-test-asin-app node "/app/$(basename "$FICHIER_XLSX")"
+    # Exécuter la commande dans le conteneur existant
+#    docker exec xlsx-to-db-test-asin-app node src/index.js "/app/data/$(basename "$FICHIER_XLSX")"
 
   # Copier le fichier XLSX dans le conteneur
-#    docker cp "$FICHIER_XLSX" xlsx-to-db-test-asin-app:/app/data/"$FICHIER_XLSX"
-
-#echo "$(basename "$FICHIER_XLSX")"
+#    docker cp "$FICHIER_XLSX" xlsx-to-db-test-asin-app:/app/data/
 #
-# winpty docker exec -it xlsx-to-db-test-asin-app  /bin/bash
+#    # Exécuter l'application dans le conteneur
+#    echo "Traitement du fichier dans le conteneur..."
+#    docker exec xlsx-to-db-test-asin-app node src/index.js "/app/data/$(basename "$FICHIER_XLSX")"
 
-    # Exécuter le script à l'intérieur du conteneur
-#    docker exec -i xlsx-to-db-test-asin-app node /app/data/"$FICHIER_XLSX"
+echo "Chemin du fichier XLSX : $FICHIER_XLSX"
+ls -l "$FICHIER_XLSX"
 
 
+docker cp "$FICHIER_XLSX" xlsx-to-db-test-asin-app:/app/data/
 
-# Exécuter le conteneur Docker en montant le fichier
-docker run  -v "$(dirname "$FICHIER_XLSX"):/app/data" xlsx-to-db-test-asin-app node src/index.js "/app/data/$(basename "$FICHIER_XLSX")"
+# Vérifier si le fichier est bien copié
+docker exec xlsx-to-db-test-asin-app ls /app/data/$(basename "$FICHIER_XLSX") &>/dev/null
+if [ $? -ne 0 ]; then
+    echo "❌ Le fichier n'a pas été copié correctement."
+    exit 1
+fi
+
+echo "Traitement du fichier dans le conteneur..."
+#docker exec xlsx-to-db-test-asin-app node src/index.js "/app/data/$(basename "$FICHIER_XLSX")"
+docker exec -it xlsx-to-db-test-asin-app /bin/sh
+
+
+#docker exec xlsx-to-db-test-asin-app node src/index.js "/app/data/$(basename "$FICHIER_XLSX")" > app.log 2>&1
+
+
 else
     echo "Utilisation d'une base de données externe : $DB_HOST"
 
