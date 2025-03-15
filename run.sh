@@ -27,8 +27,6 @@ fi
 FICHIER_XLSX="$(realpath "$1")"
 
 
-
-
 # Vérifier si on utilise la base de données du conteneur
 if [ "$USE_CONTAINER_DB" = "true" ]; then
     echo "Utilisation de la base de données du conteneur."
@@ -78,7 +76,7 @@ if [ "$USE_CONTAINER_DB" = "true" ]; then
 
 
 # Exécuter le conteneur Docker en montant le fichier
-docker run  -v "$(dirname "$FICHIER_XLSX"):/app/data" xlsx-to-db node src/index.js "/app/data/$(basename "$FICHIER_XLSX")"
+docker run  -v "$(dirname "$FICHIER_XLSX"):/app/data" xlsx-to-db-test-asin-app node src/index.js "/app/data/$(basename "$FICHIER_XLSX")"
 else
     echo "Utilisation d'une base de données externe : $DB_HOST"
 
