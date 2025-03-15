@@ -2,7 +2,7 @@
 # README.md - Importation de fichiers XLSX vers PostgreSQL
 
 ## 📌 Description
-Cette application permet d'importer un fichier `.xlsx` contenant des informations sur des personnes dans une base de données PostgreSQL. L'importation est optimisée pour être réalisée en moins de 20 minutes, même pour des fichiers volumineux.
+Cette application permet d'importer un fichier `.xlsx` contenant des informations sur des personnes dans une base de données PostgreSQL. L'importation est optimisée pour être réalisée en moins de 2 minutes, même pour des fichiers volumineux.
 
 ## 🚀 Installation et Configuration
 
@@ -16,7 +16,7 @@ Cette application permet d'importer un fichier `.xlsx` contenant des information
 Clonez le dépôt et installez les dépendances :
 
 ```bash
-git clone https://github.com/votre-repo/xlsx-to-db-test-asin.git
+git clone https://github.com/bassarou120/xlsx-to-db-test-asin.git
 cd xlsx-to-db-test-asin
 npm install
 ```
@@ -67,7 +67,20 @@ npm test
 ```
 
 ## 📷 Capture d'écran
-Ajoutez ici une capture d'écran des performances d'importation.
+
+Capture d'ecran  sur un pc mac book de 4GB de RAM
+
+![img.png](capture/Capture%20d’écran%202025-03-15%20à%2016.32.57.png)
+
+![img.png](capture/Capture%20d’écran%202025-03-15%20à%2016.45.12.png)
+
+
+des capture d'ecran  sur un pc Lenovo  de 12Gb de RAM
+
+
+![img.png](capture/r1.jpeg)
+
+![img.png](capture/r2.jpeg)
 
 ---
 
