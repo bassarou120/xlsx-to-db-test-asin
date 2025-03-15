@@ -68,6 +68,14 @@ npm test
 
 ## 📷 Capture d'écran
 
+des capture d'ecran  sur un pc Lenovo  de 12Gb de RAM
+
+
+![img.png](capture/r1.jpeg)
+
+![img.png](capture/r2.jpeg)
+
+
 Capture d'ecran  sur un pc mac book de 4GB de RAM
 
 ![img.png](capture/Capture%20d’écran%202025-03-15%20à%2016.32.57.png)
@@ -75,12 +83,7 @@ Capture d'ecran  sur un pc mac book de 4GB de RAM
 ![img.png](capture/Capture%20d’écran%202025-03-15%20à%2016.45.12.png)
 
 
-des capture d'ecran  sur un pc Lenovo  de 12Gb de RAM
 
-
-![img.png](capture/r1.jpeg)
-
-![img.png](capture/r2.jpeg)
 
 ---
 
