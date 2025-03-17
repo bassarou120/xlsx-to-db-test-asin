@@ -47,6 +47,35 @@ Assurez-vous que PostgreSQL est en cours d'exécution et exécutez :
 ```bash
 node src/index.js chemin/vers/fichier.xlsx
 ```
+## 📊 Voir le contenu de la base de données (Docker)
+
+Si vous utilisez PostgreSQL dans un conteneur Docker, vous pouvez accéder aux données avec les commandes suivantes :
+
+1. Ouvrir un terminal interactif PostgreSQL dans le conteneur :
+
+```bash
+docker exec -it postgres_db psql -U postgres -d test_asin_db
+```
+
+Attention :  executer cette commande en fonction de vos paramettres de le fichier .env
+
+2. Lister les tables disponibles :
+
+```sql
+\dt
+```
+
+3. Voir le contenu de la table `personnes` :
+
+```sql
+SELECT * FROM personnes LIMIT 20;
+```
+
+4. Quitter PostgreSQL :
+
+```sql
+\q
+```
 
 ## 📊 Performance
 L'application affiche le temps total d'importation à la fin du processus.
